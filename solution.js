@@ -32,10 +32,7 @@ function likeMovie() {
   showRandomMovie();
 }
 
-function dislikeMovie() {
-  clearCurrentMovie();
-  showRandomMovie();
-}
+
 
 function createMoviePoster(posterPath) {
   const moviePosterUrl = `https://image.tmdb.org/t/p/original/${posterPath}`;
@@ -73,7 +70,6 @@ function displayMovie(movieInfo) {
   const moviePosterDiv = document.getElementById('moviePoster');
   const movieTextDiv = document.getElementById('movieText');
   const likeBtn = document.getElementById('likeBtn');
-  const dislikeBtn = document.getElementById('dislikeBtn');
 
   const moviePoster = createMoviePoster(movieInfo.poster_path);
   const titleHeader = createMovieTitle(movieInfo.title);
@@ -85,10 +81,9 @@ function displayMovie(movieInfo) {
 
   showBtns();
   likeBtn.onclick = likeMovie;
-  dislikeBtn.onclick = dislikeMovie;
 }
 
-const tmdbKey = '0ec3bf11c92f8fd7261ed2aa8a8f2729';
+// const tmdbKey =  use your own key
 const tmdbBaseUrl = 'https://api.themoviedb.org/3/';
 const playBtn = document.getElementById('playBtn');
 
@@ -99,13 +94,13 @@ function getGenres() {
 
   const xhr = new XMLHttpRequest();
   xhr.open('GET', urlToFetch, true);
-  xhr.onreadystatechange = function () {
-    if (xhr.readyState === 400 && xhr.status === 200) {
-      const jsonResponse = JSON.parse(xhr.responseText);
-      populateGenreDropdown(jsonResponse.genres);
-    }
-  };
+
+ 
   xhr.send();
+  xhr.addEventListener('load', function (){
+    const jsonResponse = JSON.parse(xhr.responseText);
+        populateGenreDropdown(jsonResponse.genres);
+  })
 }
 
 function getMovies() {
@@ -117,15 +112,14 @@ function getMovies() {
   const xhr = new XMLHttpRequest();
   xhr.open('GET', urlToFetch, true);
   xhr.send();
-  xhr.onreadystatechange = function () {
-    if (xhr.readyState === 4 && xhr.status === 200) {
-      const jsonResponse = JSON.parse(xhr.responseText);
-      const movies = jsonResponse.results;
-      console.log("response", movies)
-      const randomMovie = getRandomMovie(movies);
-      getMovieInfo(randomMovie);
-    }
-  };
+
+  xhr.addEventListener('load', function (){
+    const jsonResponse = JSON.parse(xhr.responseText);
+        const movies = jsonResponse.results;
+        const randomMovie = getRandomMovie(movies);
+        getMovieInfo(randomMovie);
+  })
+
   
 }
 
@@ -137,13 +131,12 @@ function getMovieInfo(movie) {
 
   const xhr = new XMLHttpRequest();
   xhr.open('GET', urlToFetch, true);
-  xhr.onreadystatechange = function () {
-    if (xhr.readyState === 4 && xhr.status === 200) {
-      const movieInfo = JSON.parse(xhr.responseText);
-      displayMovie(movieInfo);
-    }
-  };
   xhr.send();
+  xhr.addEventListener('load', function (){
+    const movieInfo = JSON.parse(xhr.responseText);
+        displayMovie(movieInfo);
+  })
+
 }
 
 function showRandomMovie() {
